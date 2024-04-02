@@ -51,5 +51,12 @@
     </div>
 </div>
 
+{% if user.is_authenticated %}
+	<div class="position-fixed bottom-0 end-0 p-3">
+		<a href="{% url 'patient:patient_add' %}" type="button" class="btn btn-outline-info">
+			<i class="fa-solid fa-plus"></i> Add Patient
+        </a>
+	</div>
 
+{% endif %}
 {% endblock %}

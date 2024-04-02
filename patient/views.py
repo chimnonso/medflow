@@ -4,7 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Patient, Visit
 from .forms import PatientForm, VisitForm
 from django.contrib import messages
-
+from django.contrib.messages.views import SuccessMessageMixin
 from django.http import HttpResponseRedirect
 
 class PatientList(ListView):
@@ -13,11 +13,12 @@ class PatientList(ListView):
     context_object_name = 'patients'  # Optional: to refer to the object list as 'patients' in your template
 
 
-class PatientCreate(CreateView):
+class PatientCreate(SuccessMessageMixin, CreateView):
     model = Patient
     form_class = PatientForm
     template_name = 'patient/patient_form.html'
     success_url = reverse_lazy('pages:index')  # Replace 'patient_list' with your actual URL name for listing patients
+    success_message =  "%(first_name)s added successfully"
 
 class PatientDetail(DetailView):
     model = Patient

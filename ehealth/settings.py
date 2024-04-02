@@ -78,16 +78,16 @@ WSGI_APPLICATION = 'ehealth.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-
+# https://docs.djangoproject.com/en/5.0/ref/settings/#databases  QarzFqPdpSkVtRvuAkeBJbNllcvXKjYL  46818
+ 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'railway',
         'USER': 'postgres',
-        'PASSWORD': 'QarzFqPdpSkVtRvuAkeBJbNllcvXKjYL',
+        'PASSWORD': 'arMqbVhuaOlkUEGuhZMYlJEPAiXzkbvB',
         'HOST': 'monorail.proxy.rlwy.net',  # Set to the appropriate host if PostgreSQL is running on a different machine
-        'PORT': '46818',
+        'PORT': '26944',
     }
 }
 
@@ -140,3 +140,5 @@ from django.contrib.messages import constants as messages
 MESSAGE_TAGS = {
     messages.ERROR: 'danger',
 }
+
+CSRF_TRUSTED_ORIGINS = 'https://web-production-e0a8.up.railway.app/'
