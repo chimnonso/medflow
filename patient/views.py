@@ -17,23 +17,33 @@ class PatientCreate(SuccessMessageMixin, CreateView):
     model = Patient
     form_class = PatientForm
     template_name = 'patient/patient_form.html'
-    success_url = reverse_lazy('pages:index')  # Replace 'patient_list' with your actual URL name for listing patients
+    success_url = reverse_lazy('patient:patient_list')  # Replace 'patient_list' with your actual URL name for listing patients
     success_message =  "%(first_name)s added successfully"
+
+    def form_valid(self, form):
+        form.instance.created_by = self.request.user  # Set the logged-in user as created_by
+        return super().form_valid(form)
 
 class PatientDetail(DetailView):
     model = Patient
     template_name = 'patient/patient_detail.html'
 
-class PatientUpdate(UpdateView):
+class PatientUpdate(SuccessMessageMixin, UpdateView):
     model = Patient
     form_class = PatientForm
     template_name = 'patient/patient_form.html'
     success_url = reverse_lazy('patient:patient_list')  # Replace 'patient_list' with your actual URL name
+    success_message =  "Patient updated successfully"
 
-class PatientDelete(DeleteView):
+    def form_valid(self, form):
+        form.instance.created_by = self.request.user  # Set the logged-in user as created_by
+        return super().form_valid(form)
+
+class PatientDelete(SuccessMessageMixin, DeleteView):
     model = Patient
     template_name = 'patients/patient_confirm_delete.html'
-    success_url = reverse_lazy('patient_list')  # Replace 'patient_list' with your actual URL name
+    success_url = reverse_lazy('patient:patient_list')  # Replace 'patient_list' with your actual URL name
+    success_message =  "Patient deleted successfully"
 
 
 class VisitCreateView(CreateView):
@@ -50,12 +60,14 @@ class VisitCreateView(CreateView):
 
     def form_valid(self, form):
         form.instance.patient_id = self.kwargs.get('pk')  # Set the patient based on the URL
+        form.instance.doctor = self.request.user
         # Add success message
         messages.success(self.request, 'Visit created successfully!')
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse_lazy('patient:patient_list')  # Adjust this to your needs
+        patient_id = self.kwargs.get('pk')
+        return reverse_lazy('patient:patient_detail', kwargs={'pk': patient_id})  # Adjust this to your needs
 
 
 class VisitUpdateView(UpdateView):
@@ -64,13 +76,13 @@ class VisitUpdateView(UpdateView):
     template_name = 'patient/visit_form.html'
 
     def form_valid(self, form):
+        form.instance.patient_id = self.kwargs.get('pk')
+        form.instance.doctor = self.request.user
         response = super().form_valid(form)
         # Add success message
         messages.success(self.request, 'Visit updated successfully!')
         return response
 
     def get_success_url(self):
-        next_url = self.request.GET.get('next', None)
-        if next_url:
-            return next_url
-        return reverse_lazy('patient:patient_list')
+        patient_id = self.kwargs.get('pk')
+        return reverse_lazy('patient:patient_detail', kwargs={'pk': patient_id})
