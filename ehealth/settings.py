@@ -141,4 +141,4 @@ MESSAGE_TAGS = {
     messages.ERROR: 'danger',
 }
 
-CSRF_TRUSTED_ORIGINS = 'https://web-production-e0a8.up.railway.app'
+CSRF_TRUSTED_ORIGINS = ['https://web-production-e0a8.up.railway.app'] 
