@@ -1,0 +1,17 @@
+<div class="card shadow-lg">
+    <h4 class="card-header">Overview</h4>
+    <div class="card-body">
+        <div class="list-group">
+            <a href="{% url 'members:professors_list' %}" class="list-group-item {% if request.path == '/members/professors/' %}list-group-item list-group-item-action active{% endif %}">
+                Serendipity 
+                <!-- <span class="badge bg-danger rounded-pill float-end">{{ total }}</span> -->
+            </a>
+            
+            <a href="{% url 'members:post_docs_list' %}" class="list-group-item {% if request.path == '/members/post_docs/' %}list-group-item list-group-item-action active{% endif %} ">Annoucement</a>
+            <a href="{% url 'members:full_time_list' %}" class="list-group-item {% if request.path == '/members/full_time/' %}list-group-item list-group-item-action active{% endif %} ">Recruitments</a>
+            <a href="" class="list-group-item">News</a>
+            <a href="" class="list-group-item">Album</a>
+            
+        </div>
+    </div>
+</div>

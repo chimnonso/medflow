@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load bootstrap5 %}
+{% block content %}
+<div class="accounts_form">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-10">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Name: {{ patient.first_name | capfirst }} {{ patient.last_name | capfirst }}</h5>
+                        <!-- <h6 class="card-subtitle mb-2 text-body-secondary">Card subtitle</h6> -->
+                        <p class="card-text">Address: {{ patient.address }}</p>
+                        <p class="card-text">Email: {{ patient.email }}</p>
+                        <p class="card-text">Sex: {{ patient.get_Sex_display }}</p>
+                        <p class="card-text">Created By: {{ patient.created_by }}</p>
+                        <p class="card-text">Dob: {{ patient.dob }}</p>
+                        <!-- <a href="#" class="card-link">Card link</a>
+                      <a href="#" class="card-link">Another link</a> -->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="row col-sm-10">
+            <div class="card">
+                <h5 class="card-title">Visits</h5>
+
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Doctor</th>
+                            <!-- <th>Author</th> -->
+                            <th>Visit Reason</th>
+                            <th>Diagnosis</th>
+                            <th>Symptoms</th>
+                            <th>Cadence</th>
+                            <th>Visit Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for visit in patient.visits.all %}
+                        <tr>
+                            <th scope="row">{{ forloop.revcounter}}</th>
+                            <td>
+                                    {{ visit.doctor | capfirst }}
+                            </td>
+                            <!-- <td>{{ conference.writer }}</td> -->
+                            <td>{{ visit.visit_reason }} </td>
+                            <td>{{ visit.diagnosis }} </td>
+                            <td>{{ visit.symptoms }} </td>
+                            <td>{{ visit.cadence }} </td>
+                            <td>{{ visit.visit_date }} </td>
+                            <td>
+                                <a href="{% url 'patient:visit_update' pk=visit.pk %}?next={{ request.path }}" class="btn btn-outline-info">Edit</a>
+                                <!-- <a href="{% url 'patient:patient_delete' pk=visit.pk %}" class="btn btn-outline-danger">Delete</a> -->
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% if user.is_authenticated %}
+	<div class="position-fixed bottom-0 end-0 p-3">
+		<a href="{% url 'patient:add_visit' pk=patient.id %}" type="button" class="btn btn-outline-info">
+			<i class="fa-solid fa-plus"></i> Add Visit
+        </a>
+	</div>
+
+{% endif %}
+{% endblock %}

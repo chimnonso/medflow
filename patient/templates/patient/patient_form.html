@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load bootstrap5 %}
+{% block content %}
+<div class="accounts_form">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <div class="card">
+                    <h5 class="card-header text-light text-center bg-info">Create/Update Patient</h5>
+                    <div class="card-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            {% bootstrap_form form show_label=True%}
+                            <input type="hidden" name="next" value="{{ request.GET.next }}">
+                            <div class="d-grid gap-2">
+                                {% bootstrap_button "Create/Update" button_type="submit" button_class="btn-outline-info" %}
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
