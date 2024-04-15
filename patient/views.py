@@ -101,17 +101,19 @@ class InventoryDetail(DetailView):
     context_object_name = 'item'
     template_name = 'inventory/inventory_detail.html'
 
-class InventoryCreate(CreateView):
+class InventoryCreate(SuccessMessageMixin, CreateView):
     model = Inventory
     form_class = InventoryForm
     template_name = 'inventory/inventory_form.html'
     success_url = reverse_lazy('patient:inventory-list')
+    success_message =  "Inventory created successfully"
 
-class InventoryUpdate(UpdateView):
+class InventoryUpdate(SuccessMessageMixin, UpdateView):
     model = Inventory
     form_class = InventoryForm
     template_name = 'inventory/inventory_form.html'
     success_url = reverse_lazy('patient:inventory-list')
+    success_message =  "Inventory updated successfully"
 
 class InventoryDelete(DeleteView):
     model = Inventory
@@ -130,11 +132,12 @@ class PrescriptionDetail(DetailView):
     context_object_name = 'prescription'
     template_name = 'prescriptions/prescription_detail.html'
 
-class PrescriptionCreate(CreateView):
+class PrescriptionCreate(SuccessMessageMixin, CreateView):
     model = Prescription
     form_class = PrescriptionForm
     template_name = 'prescriptions/prescription_form.html'
     success_url = reverse_lazy('patient:prescription-list')
+    success_message =  "Prescription created successfully"
 
 class PrescriptionUpdate(UpdateView):
     model = Prescription
@@ -159,6 +162,7 @@ class PrescriptionUpdate(UpdateView):
                     # Reduce the stock count safely using F()
                     inventory_item.quantity_in_stock = F('quantity_in_stock') - amount_to_reduce
                     inventory_item.save()
+                    messages.success(self.request, 'Prescription updated successfully!')
                     inventory_item.refresh_from_db()  # To get the updated stock value if needed elsewhere
                 else:
                     # Raise an error if stock is insufficient
