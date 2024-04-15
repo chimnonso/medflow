@@ -1,5 +1,5 @@
 from django import forms
-from .models import Patient, Visit
+from .models import Patient, Visit, Inventory, Prescription
 
 class PatientForm(forms.ModelForm):
     class Meta:
@@ -18,3 +18,22 @@ class VisitForm(forms.ModelForm):
         widgets = {
             'visit_date': forms.DateInput(attrs={'type': 'date'})
         }
+
+
+class InventoryForm(forms.ModelForm):
+    class Meta:
+        model = Inventory
+        fields = ['medicine_name', 'quantity_in_stock', 'expiry_date', 'manufacturer']
+        widgets = {
+            'expiry_date': forms.DateInput(attrs={'type': 'date'})
+        }
+
+class PrescriptionForm(forms.ModelForm):
+    class Meta:
+        model = Prescription
+        fields = ['patient', 'medicine', 'dosage', 'frequency', 'duration', 'visit', 'is_filled']
+        widgets = {
+            'prescribed_date': forms.DateInput(attrs={'type': 'date'})
+        }
+
+    

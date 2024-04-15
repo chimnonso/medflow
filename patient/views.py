@@ -1,11 +1,15 @@
 from django.views.generic import CreateView, DetailView, UpdateView, DeleteView, ListView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import Patient, Visit
-from .forms import PatientForm, VisitForm
+from .models import Patient, Visit, Inventory, Prescription
+from .forms import PatientForm, VisitForm, InventoryForm, PrescriptionForm
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404
+from django.db.models import F
+from django.core.exceptions import ValidationError
+
 
 class PatientList(ListView):
     model = Patient
@@ -86,3 +90,92 @@ class VisitUpdateView(UpdateView):
     def get_success_url(self):
         patient_id = self.kwargs.get('pk')
         return reverse_lazy('patient:patient_detail', kwargs={'pk': patient_id})
+
+class InventoryList(ListView):
+    model = Inventory
+    context_object_name = 'inventory'
+    template_name = 'inventory/inventory_list.html'
+
+class InventoryDetail(DetailView):
+    model = Inventory
+    context_object_name = 'item'
+    template_name = 'inventory/inventory_detail.html'
+
+class InventoryCreate(CreateView):
+    model = Inventory
+    form_class = InventoryForm
+    template_name = 'inventory/inventory_form.html'
+    success_url = reverse_lazy('patient:inventory-list')
+
+class InventoryUpdate(UpdateView):
+    model = Inventory
+    form_class = InventoryForm
+    template_name = 'inventory/inventory_form.html'
+    success_url = reverse_lazy('patient:inventory-list')
+
+class InventoryDelete(DeleteView):
+    model = Inventory
+    context_object_name = 'item'
+    template_name = 'inventory/inventory_confirm_delete.html'
+    success_url = reverse_lazy('patient:inventory-list')
+
+
+class PrescriptionList(ListView):
+    model = Prescription
+    context_object_name = 'prescriptions'
+    template_name = 'prescriptions/prescription_list.html'
+
+class PrescriptionDetail(DetailView):
+    model = Prescription
+    context_object_name = 'prescription'
+    template_name = 'prescriptions/prescription_detail.html'
+
+class PrescriptionCreate(CreateView):
+    model = Prescription
+    form_class = PrescriptionForm
+    template_name = 'prescriptions/prescription_form.html'
+    success_url = reverse_lazy('patient:prescription-list')
+
+class PrescriptionUpdate(UpdateView):
+    model = Prescription
+    form_class = PrescriptionForm
+    template_name = 'prescriptions/prescription_form.html'
+    success_url = reverse_lazy('patient:patient_list')
+
+    def form_valid(self, form):
+        # Get the current instance to compare the old value of `is_filled`
+        prescription = form.save(commit=False)
+        if 'is_filled' in form.changed_data and form.cleaned_data['is_filled']:
+            # If `is_filled` has been changed to True, update inventory
+            inventory_item = prescription.medicine
+            try:
+                # Attempt to convert dosage and frequency to integers
+                dosage = int(prescription.dosage)
+                frequency = int(prescription.frequency)
+                duration = int(prescription.duration)
+                amount_to_reduce = dosage * frequency * duration
+
+                if inventory_item and inventory_item.quantity_in_stock >= amount_to_reduce:
+                    # Reduce the stock count safely using F()
+                    inventory_item.quantity_in_stock = F('quantity_in_stock') - amount_to_reduce
+                    inventory_item.save()
+                    inventory_item.refresh_from_db()  # To get the updated stock value if needed elsewhere
+                else:
+                    # Raise an error if stock is insufficient
+                    form.add_error(None, 'Insufficient stock to fulfill prescription.')
+                    return self.form_invalid(form)
+            except ValueError:
+                # Handle the case where conversion to integer fails
+                form.add_error('dosage', 'Dosage and frequency must be numeric.')
+                form.add_error('frequency', 'Dosage and frequency must be numeric.')
+                return self.form_invalid(form)
+
+        # Save the changes to the prescription
+        prescription.save()
+        return super(PrescriptionUpdate, self).form_valid(form)
+
+class PrescriptionDelete(DeleteView):
+    model = Prescription
+    context_object_name = 'prescription'
+    template_name = 'prescriptions/prescription_confirm_delete.html'
+    success_url = reverse_lazy('patient:prescription-list')

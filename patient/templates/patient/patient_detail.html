@@ -13,7 +13,7 @@
                         <p class="card-text">Email: {{ patient.email }}</p>
                         <p class="card-text">Sex: {{ patient.get_Sex_display }}</p>
                         <p class="card-text">Created By: {{ patient.created_by }}</p>
-                        <p class="card-text">Dob: {{ patient.dob }}</p>
+                        <p class="card-text">Age: {{ patient.age }} years</p>
                         <!-- <a href="#" class="card-link">Card link</a>
                       <a href="#" class="card-link">Another link</a> -->
                     </div>
@@ -21,7 +21,7 @@
             </div>
 
         </div>
-        <div class="row col-sm-10">
+        <div class="row col-sm-10 mt-5">
             <div class="">
                 <h5 class="">Visits</h5>
 
@@ -63,6 +63,47 @@
 
             </div>
         </div>
+
+        <div class="row col-sm-10 mt-5">
+            <div class="">
+                <h5 class="">Prescriptions</h5>
+
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Medicine</th>
+                            <!-- <th>Author</th> -->
+                            <th>Dosage</th>
+                            <th>Frequency</th>
+                            <th>duration</th>
+                            <th>Prescribed Date</th>
+                            <th>Is Filled?</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pre in patient.prescriptions.all %}
+                        <tr>
+                            <th scope="row">{{ forloop.revcounter}}</th>
+                            <td>
+                                    {{ pre.medicine.medicine_name | capfirst }}
+                            </td>
+                            <!-- <td>{{ conference.writer }}</td> -->
+                            <td>{{ pre.dosage }} </td>
+                            <td>{{ pre.frequency }} </td>
+                            <td>{{ pre.duration }} </td>
+                            <td>{{ pre.prescribed_date }} </td>
+                            <td>{{ pre.is_filled }} </td>
+                            <td>
+                                <a href="{% url 'patient:prescription-update' pk=pre.pk %}" class="btn btn-outline-info">Edit</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
     </div>
 </div>
 {% if user.is_authenticated %}
@@ -73,4 +114,9 @@
 	</div>
 
 {% endif %}
+<div class="position-fixed bottom-0 start-0 p-3">
+    <a href="{% url 'patient:prescription-add'%}" type="button" class="btn btn-outline-info">
+        <i class="fa-solid fa-plus"></i> Add Prescription
+    </a>
+</div>
 {% endblock %}

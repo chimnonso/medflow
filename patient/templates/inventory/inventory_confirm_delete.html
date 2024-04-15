@@ -1,0 +1,14 @@
+<!-- templates/inventory/inventory_confirm_delete.html -->
+{% extends 'base.html' %}
+{% block content %}
+  <div class="container">
+    <div class="card p-5">
+        <h2>Are you sure you want to delete "{{ item.medicine_name }}"?</h2>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-danger">Yes, delete it</button>
+            <a href="{% url 'patient:inventory-list' %}" class="btn btn-outline-success">Cancel</a>
+        </form>
+    </div>
+  </div>
+{% endblock %}

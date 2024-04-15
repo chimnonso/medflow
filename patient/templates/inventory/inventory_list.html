@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load bootstrap5 %}
+{% block content %}
+<div class="accounts_form">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-10">
+                {% if inventory %}
+              <table class="table table-striped table-hover">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Medicine Name</th>
+                    <!-- <th>Author</th> -->
+                    <th>Manufacturer</th>
+                    <th>Expiry</th>
+                    <th>Qunatity in Stock</th>
+                    
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for item in inventory %}
+                  <tr>
+                    <th scope="row">{{ forloop.revcounter}}</th>
+                    <td>
+                      
+                        {{ item.medicine_name | capfirst }} 
+                      
+                    </td>
+                    <!-- <td>{{ conference.writer }}</td> -->
+                    <td>{{ item.manufacturer | capfirst }} </td>
+                    <td>{{ item.expiry_date | date }} </td>
+                    <td>{{ item.quantity_in_stock }} </td>
+                    <td>
+                        <a href="{% url 'patient:inventory-update' pk=item.pk %}" class="btn btn-outline-info">Edit</a>
+                        <a href="{% url 'patient:inventory-delete' pk=item.pk %}" class="btn btn-outline-danger">Delete</a>
+                    </td>
+                  </tr>
+                  
+        
+                  {% endfor %}
+                </tbody>
+              </table>
+              {% else %}
+              <P>No data</P>
+              {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if True %}
+	<div class="position-fixed bottom-0 end-0 p-3">
+		<a href="{% url 'patient:inventory-add' %}" type="button" class="btn btn-outline-info">
+			<i class="fa-solid fa-plus"></i> Add Inventory
+        </a>
+	</div>
+
+{% endif %}
+{% endblock %}

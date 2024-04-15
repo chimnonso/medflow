@@ -18,6 +18,9 @@ class Patient(models.Model):
     dob = models.DateField()
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
+
     def calculate_age(self):
         today = date.today()
         born = self.dob
@@ -39,4 +42,29 @@ class Visit(models.Model):
     symptoms = models.TextField()
     cadence = models.TextField()
     visit_date = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"{self.patient.first_name} {self.patient.last_name} - {self.visit_date}"
     
+
+class Inventory(models.Model):
+    medicine_name = models.CharField(max_length=100)
+    quantity_in_stock = models.IntegerField()
+    expiry_date = models.DateField()
+    manufacturer = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.medicine_name} - {self.quantity_in_stock} units"
+
+class Prescription(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='prescriptions')
+    visit = models.ForeignKey('Visit', on_delete=models.CASCADE, related_name='prescriptions')
+    medicine = models.ForeignKey(Inventory, on_delete=models.SET_NULL, null=True, related_name='prescriptions')
+    dosage = models.IntegerField()
+    frequency = models.IntegerField()
+    duration = models.IntegerField("Number of weeks")
+    prescribed_date = models.DateField(default=date.today)
+    is_filled = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Prescription for {self.patient.first_name} {self.patient.last_name} on {self.prescribed_date}"
