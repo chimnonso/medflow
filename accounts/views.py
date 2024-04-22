@@ -47,4 +47,4 @@ def login_user(request):
 def logout_user(request):
     logout(request)
     messages.add_message(request, messages.SUCCESS, f'See you soon {request.user.username}')
-    return redirect('publications:journals')
+    return redirect('pages:index')

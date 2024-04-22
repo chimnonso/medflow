@@ -11,13 +11,15 @@ from django.db.models import F
 from django.core.exceptions import ValidationError
 
 
-class PatientList(ListView):
+class PatientList(LoginRequiredMixin, ListView):
+    login_url = 'accounts:login'
     model = Patient
     template_name = 'patient/patient_list.html'  # Specify your template name
     context_object_name = 'patients'  # Optional: to refer to the object list as 'patients' in your template
 
 
-class PatientCreate(SuccessMessageMixin, CreateView):
+class PatientCreate(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+    login_url = 'accounts:login'
     model = Patient
     form_class = PatientForm
     template_name = 'patient/patient_form.html'
@@ -28,11 +30,13 @@ class PatientCreate(SuccessMessageMixin, CreateView):
         form.instance.created_by = self.request.user  # Set the logged-in user as created_by
         return super().form_valid(form)
 
-class PatientDetail(DetailView):
+class PatientDetail(LoginRequiredMixin, DetailView):
+    login_url = 'accounts:login'
     model = Patient
     template_name = 'patient/patient_detail.html'
 
-class PatientUpdate(SuccessMessageMixin, UpdateView):
+class PatientUpdate(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+    login_url = 'accounts:login'
     model = Patient
     form_class = PatientForm
     template_name = 'patient/patient_form.html'
@@ -43,14 +47,16 @@ class PatientUpdate(SuccessMessageMixin, UpdateView):
         form.instance.created_by = self.request.user  # Set the logged-in user as created_by
         return super().form_valid(form)
 
-class PatientDelete(SuccessMessageMixin, DeleteView):
+class PatientDelete(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
+    login_url = 'accounts:login'
     model = Patient
     template_name = 'patients/patient_confirm_delete.html'
     success_url = reverse_lazy('patient:patient_list')  # Replace 'patient_list' with your actual URL name
     success_message =  "Patient deleted successfully"
 
 
-class VisitCreateView(CreateView):
+class VisitCreateView(LoginRequiredMixin, CreateView):
+    login_url = 'accounts:login'
     model = Visit
     form_class = VisitForm
     template_name = 'patient/visit_form.html'
@@ -74,7 +80,8 @@ class VisitCreateView(CreateView):
         return reverse_lazy('patient:patient_detail', kwargs={'pk': patient_id})  # Adjust this to your needs
 
 
-class VisitUpdateView(UpdateView):
+class VisitUpdateView(LoginRequiredMixin, UpdateView):
+    login_url = 'accounts:login'
     model = Visit
     form_class = VisitForm
     template_name = 'patient/visit_form.html'
@@ -91,55 +98,64 @@ class VisitUpdateView(UpdateView):
         patient_id = self.kwargs.get('pk')
         return reverse_lazy('patient:patient_detail', kwargs={'pk': patient_id})
 
-class InventoryList(ListView):
+class InventoryList(LoginRequiredMixin, ListView):
+    login_url = 'accounts:login'
     model = Inventory
     context_object_name = 'inventory'
     template_name = 'inventory/inventory_list.html'
 
-class InventoryDetail(DetailView):
+class InventoryDetail(LoginRequiredMixin, DetailView):
+    login_url = 'accounts:login'
     model = Inventory
     context_object_name = 'item'
     template_name = 'inventory/inventory_detail.html'
 
-class InventoryCreate(SuccessMessageMixin, CreateView):
+class InventoryCreate(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+    login_url = 'accounts:login'
     model = Inventory
     form_class = InventoryForm
     template_name = 'inventory/inventory_form.html'
     success_url = reverse_lazy('patient:inventory-list')
     success_message =  "Inventory created successfully"
 
-class InventoryUpdate(SuccessMessageMixin, UpdateView):
+class InventoryUpdate(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+    login_url = 'accounts:login'
     model = Inventory
     form_class = InventoryForm
     template_name = 'inventory/inventory_form.html'
     success_url = reverse_lazy('patient:inventory-list')
     success_message =  "Inventory updated successfully"
 
-class InventoryDelete(DeleteView):
+class InventoryDelete(LoginRequiredMixin, DeleteView):
+    login_url = 'accounts:login'
     model = Inventory
     context_object_name = 'item'
     template_name = 'inventory/inventory_confirm_delete.html'
     success_url = reverse_lazy('patient:inventory-list')
 
 
-class PrescriptionList(ListView):
+class PrescriptionList(LoginRequiredMixin, ListView):
+    login_url = 'accounts:login'
     model = Prescription
     context_object_name = 'prescriptions'
     template_name = 'prescriptions/prescription_list.html'
 
-class PrescriptionDetail(DetailView):
+class PrescriptionDetail(LoginRequiredMixin, DetailView):
+    login_url = 'accounts:login'
     model = Prescription
     context_object_name = 'prescription'
     template_name = 'prescriptions/prescription_detail.html'
 
-class PrescriptionCreate(SuccessMessageMixin, CreateView):
+class PrescriptionCreate(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+    login_url = 'accounts:login'
     model = Prescription
     form_class = PrescriptionForm
     template_name = 'prescriptions/prescription_form.html'
     success_url = reverse_lazy('patient:prescription-list')
     success_message =  "Prescription created successfully"
 
-class PrescriptionUpdate(UpdateView):
+class PrescriptionUpdate(LoginRequiredMixin, UpdateView):
+    login_url = 'accounts:login'
     model = Prescription
     form_class = PrescriptionForm
     template_name = 'prescriptions/prescription_form.html'
@@ -178,7 +194,8 @@ class PrescriptionUpdate(UpdateView):
         prescription.save()
         return super(PrescriptionUpdate, self).form_valid(form)
 
-class PrescriptionDelete(DeleteView):
+class PrescriptionDelete(LoginRequiredMixin, DeleteView):
+    login_url = 'accounts:login'
     model = Prescription
     context_object_name = 'prescription'
     template_name = 'prescriptions/prescription_confirm_delete.html'
