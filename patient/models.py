@@ -40,7 +40,6 @@ class Visit(models.Model):
     visit_reason = models.TextField()
     diagnosis = models.TextField()
     symptoms = models.TextField()
-    cadence = models.TextField()
     visit_date = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
