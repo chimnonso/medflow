@@ -14,7 +14,7 @@ class PatientForm(forms.ModelForm):
 class VisitForm(forms.ModelForm):
     class Meta:
         model = Visit
-        fields = ['visit_reason', 'diagnosis', 'symptoms', 'cadence', 'visit_date']
+        fields = ['visit_reason', 'diagnosis', 'symptoms', 'visit_date']
         widgets = {
             'visit_date': forms.DateInput(attrs={'type': 'date'})
         }
